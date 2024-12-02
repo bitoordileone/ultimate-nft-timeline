@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inconsolata:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #720000;
+            font-family: 'Inconsolata', monospace;
+        }
+        .header, .footer {
+            position: fixed;
+            left: 0;
+            width: 100%;
+            padding: 40px 0;
+            z-index: 1000;
+            background: rgba(113, 0, 0, 0.9);
+            color: white;
+            display: flex;
+            justify-content: center;
+        }
+
+        .header {
+            top: 0;
+        }
+
+        .footer {
+            bottom: 0;
+        }
+
+        .header-content, .footer-content {
+            width: 100%;
+            padding: 0 40px;
+        }
+
+        .footer-content {
+            display: flex;
+            gap: 30px;
+        }
+
+        .footer-column {
+            flex: 1;
+        }
+
+        .footer-column h3 {
+            margin: 0 0 10px 0;
+            font-size: 0.9em;
+            opacity: 0.9;
+            color: white;
+        }
+
+        .footer-column a {
+            display: block;
+            color: #FF9900;
+            text-decoration: none;
+            font-size: 0.8em;
+            margin-bottom: 5px;
+            opacity: 0.5;
+            transition: opacity 0.3s;
+        }
+
+        .footer-column a:hover {
+            opacity: 1;
+        }
+        .title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 3.5em;
+            margin: 0 0 10px 0;
+            letter-spacing: -1px;
+        }
+        .description {
+            max-width: 800px;
+            margin: 0 0 20px 0;
+            line-height: 1.4;
+            color: #FF9900;
+            opacity: 0.5;
+        }
+        .retweet-btn {
+            display: inline-flex;
+            align-items: center;
+            background: #000;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background 0.3s;
+            gap: 8px;
+        }
+        .retweet-btn:hover {
+            background: #333;
+        }
+        .container {
+            width: 100vw;
+            height: calc(100vh - 20px);
+            overflow-x: scroll;
+            overflow-y: hidden;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            position: relative;
+            margin-bottom: 20px;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .image-wrapper {
+            display: inline-block;
+            transform-origin: left center;
+        }
+        img {
+            height: auto;
+            max-height: 95vh;
+            display: block;
+        }
+        .zoom-controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+        }
+        .zoom-btn {
+            width: 40px;
+            height: 40px;
+            margin: 5px;
+            border: none;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.8);
+            font-size: 20px;
+            cursor: pointer;
+            transition: background 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 1;
+        }
+        .zoom-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .zoom-btn:hover:not(:disabled) {
+            background: rgba(255, 255, 255, 1);
+        }
+        .custom-scrollbar {
+            position: fixed;
+            bottom: 220px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            height: 8px;
+            background: #5c0000;
+            border-radius: 8px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: flex-start;
+            justify-content: flex-start;
+        }
+
+        .scroll-thumb {
+            position: absolute;
+            height: 100%;
+            background: #ff9900;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .scroll-thumb:hover {
+            background: #ffad33;
+        }
+        
+        /* Hide zoom buttons on mobile */
+        @media (max-width: 768px) {
+            .zoom-controls {
+                display: none;
+            }
+            .container {
+                touch-action: pinch-zoom;
+            }
+            .title {
+                font-size: 2.5em;
+            }
+            .footer-content {
+                flex-wrap: wrap;
+                padding: 20px;
+                justify-content: flex-start;
+            }
+            .footer-column {
+                flex: 0 0 calc(50% - 15px);
+                margin-bottom: 20px;
+            }
+            .image-wrapper img {
+                max-width: none;
+                width: auto;
+                height: 80vh;
+            }
+            .header-content {
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .footer-column {
+                flex: 0 0 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <h1 class="title">Ordinals & NFTs Ultimate Timeline</h1>
+            <p class="description">Note: While I strive for accuracy, some dates may vary, certain events may lack complete information, and minor discrepancies might exist. Also feel free to send me a DM with ideas and suggestions.</p>
+            <a href="https://twitter.com/intent/retweet?tweet_id=1795474611036959105" target="_blank" class="retweet-btn">
+                <svg height="16" width="16" viewBox="0 0 24 24" fill="white">
+                    <path d="M23.77 15.67c-.292-.293-.767-.293-1.06 0l-2.22 2.22V7.65c0-2.068-1.683-3.75-3.75-3.75h-5.85c-.414 0-.75.336-.75.75s.336.75.75.75h5.85c1.24 0 2.25 1.01 2.25 2.25v10.24l-2.22-2.22c-.293-.293-.768-.293-1.06 0s-.294.768 0 1.06l3.5 3.5c.145.147.337.22.53.22s.383-.072.53-.22l3.5-3.5c.294-.292.294-.767 0-1.06zm-10.66 3.28H7.26c-1.24 0-2.25-1.01-2.25-2.25V6.46l2.22 2.22c.148.147.34.22.532.22s.384-.073.53-.22c.293-.293.293-.768 0-1.06l-3.5-3.5c-.293-.294-.768-.294-1.06 0l-3.5 3.5c-.294.292-.294.767 0 1.06s.767.293 1.06 0l2.22-2.22V16.7c0 2.068 1.683 3.75 3.75 3.75h5.85c.414 0 .75-.336.75-.75s-.337-.75-.75-.75z"/>
+                </svg>
+                Retweet on X
+            </a>
+        </div>
+    </div>
+
+    <div class="zoom-controls">
+        <button class="zoom-btn" id="zoomIn" disabled>+</button>
+        <button class="zoom-btn" id="zoomOut">−</button>
+    </div>
+
+    <div class="custom-scrollbar">
+        <div class="scroll-thumb"></div>
+    </div>
+
+    <div class="container">
+        <div class="image-wrapper">
+            <img src="timeline-image.jpg" alt="Timeline" id="timelineImage">
+        </div>
+    </div>
+
+    <div class="footer">
+        <div class="footer-content">
+            <div class="footer-column">
+                <h3>Sources</h3>
+                <a href="https://nftnow.com/" target="_blank">NFT Now</a>
+                <a href="https://nftevening.com/" target="_blank">NFT Evening</a>
+                <a href="https://twitter.com/MegaPunks_BTC" target="_blank">@MegaPunks_BTC</a>
+            </div>
+            <div class="footer-column">
+                <h3>Sources</h3>
+                <a href="https://ordinalsdir.com/" target="_blank">Ordinals Dir</a>
+                <a href="https://twitter.com/ordinalswallet" target="_blank">@ordinalswallet</a>
+                <a href="https://www.techopedia.com/" target="_blank">Techopedia</a>
+            </div>
+            <div class="footer-column">
+                <h3>Sources</h3>
+                <a href="https://medium.com/@GryphsisAcademy" target="_blank">Gryphsis Academy</a>
+                <a href="https://justmy2satoshis.medium.com/" target="_blank">Just My 2 Satoshis</a>
+                <a href="https://twitter.com/HarryBTC" target="_blank">@HarryBTC</a>
+            </div>
+            <div class="footer-column">
+                <h3>Sources</h3>
+                <a href="https://twitter.com/LeonidasNFT" target="_blank">@LeonidasNFT</a>
+                <a href="https://ordinalsbot.medium.com" target="_blank">Ordinals Bot</a>
+                <a href="https://www.gate.io/" target="_blank">Gate.io</a>
+            </div>
+            <div class="footer-column">
+                <h3>Sources</h3>
+                <a href="https://rodarmor.com/" target="_blank">Rodarmor</a>
+                <a href="https://metaversal.banklesshq.com/" target="_blank">Metaversal</a>
+                <a href="https://twitter.com/PatientWhale" target="_blank">@PatientWhale</a>
+            </div>
+            <div class="footer-column">
+                <h3>Sources</h3>
+                <a href="https://cryptonews.net/" target="_blank">Crypto News</a>
+                <a href="https://dexterlab.com/" target="_blank">Dexter Lab</a>
+                <a href="https://twitter.com/ItsFranken" target="_blank">@ItsFranken</a>
+            </div>
+            <div class="footer-column">
+                <h3>Sources</h3>
+                <a href="https://www.coinlive.com/" target="_blank">Coin Live</a>
+                <a href="https://onchainmonkey.com/" target="_blank">Onchain Monkey</a>
+                <a href="https://blog.ordinalhub.com/" target="_blank">Ordinal Hub</a>
+            </div>
+            <div class="footer-column">
+                <h3>Sources</h3>
+                <a href="https://twitter.com/SeizeCTRL" target="_blank">@SeizeCTRL</a>
+                <a href="https://magiceden.io/" target="_blank">Magic Eden</a>
+                <a href="https://geniidata.com/" target="_blank">Genii Data</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const container = document.querySelector('.container');
+        const customScrollbar = document.querySelector('.custom-scrollbar');
+        const scrollThumb = document.querySelector('.scroll-thumb');
+        const wrapper = document.querySelector('.image-wrapper');
+        const img = document.getElementById('timelineImage');
+        const zoomIn = document.getElementById('zoomIn');
+        const zoomOut = document.getElementById('zoomOut');
+        
+        let scale = 1;
+        const ZOOM_STEP = 0.2;
+        const MIN_SCALE = 0.4;
+        const MAX_SCALE = 1;
+        let isDragging = false;
+        let startX, scrollLeft, thumbStartX;
+
+        // Update thumb size and position based on viewport
+        function updateThumb() {
+            const containerWidth = container.scrollWidth;
+            const viewportWidth = container.clientWidth;
+            const thumbWidth = Math.max((viewportWidth / containerWidth) * customScrollbar.clientWidth, 50);
+            const scrollProgress = container.scrollLeft / (containerWidth - viewportWidth);
+            const maxThumbPosition = customScrollbar.clientWidth - thumbWidth;
+            const thumbPosition = scrollProgress * maxThumbPosition;
+
+            scrollThumb.style.width = `${thumbWidth}px`;
+            scrollThumb.style.left = `${thumbPosition}px`;
+        }
+
+        // Initialize thumb
+        updateThumb();
+        window.addEventListener('resize', updateThumb);
+
+        // Sync scroll position with thumb
+        container.addEventListener('scroll', () => {
+            if (!isDragging) {
+                updateThumb();
+            }
+        });
+
+        // Handle thumb dragging
+        scrollThumb.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            startX = e.clientX - scrollThumb.offsetLeft;
+            document.body.style.userSelect = 'none';
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+
+            const x = e.clientX - startX;
+            const maxThumbPosition = customScrollbar.clientWidth - scrollThumb.clientWidth;
+            const boundedPosition = Math.max(0, Math.min(x, maxThumbPosition));
+            const scrollProgress = boundedPosition / maxThumbPosition;
+            const maxScroll = container.scrollWidth - container.clientWidth;
+
+            scrollThumb.style.left = `${boundedPosition}px`;
+            container.scrollLeft = scrollProgress * maxScroll;
+        });
+
+        document.addEventListener('mouseup', () => {
+            isDragging = false;
+            document.body.style.userSelect = '';
+        });
+
+        // Handle click on scrollbar track
+        customScrollbar.addEventListener('click', (e) => {
+            if (e.target === scrollThumb) return;
+            
+            const clickX = e.clientX - customScrollbar.getBoundingClientRect().left;
+            const thumbWidth = scrollThumb.clientWidth;
+            const maxThumbPosition = customScrollbar.clientWidth - thumbWidth;
+            const boundedPosition = Math.max(0, Math.min(clickX - thumbWidth / 2, maxThumbPosition));
+            const scrollProgress = boundedPosition / maxThumbPosition;
+            const maxScroll = container.scrollWidth - container.clientWidth;
+
+            container.scrollLeft = scrollProgress * maxScroll;
+        });
+
+        // Update zoom and thumb when scale changes
+        function updateZoom(newScale) {
+            scale = Math.min(Math.max(newScale, MIN_SCALE), MAX_SCALE);
+            wrapper.style.transform = `scale(${scale})`;
+            wrapper.style.width = `${100/scale}%`;
+            
+            // Update button states
+            zoomIn.disabled = scale >= MAX_SCALE;
+            zoomOut.disabled = scale <= MIN_SCALE;
+            updateThumb();
+        }
+
+        // Horizontal scroll with mouse wheel
+        container.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            container.scrollLeft += e.deltaY * 2;
+        }, { passive: false });
+
+        // Desktop zoom buttons
+        zoomIn.addEventListener('click', () => {
+            if (scale < MAX_SCALE) {
+                updateZoom(scale + ZOOM_STEP);
+            }
+        });
+
+        zoomOut.addEventListener('click', () => {
+            if (scale > MIN_SCALE) {
+                updateZoom(scale - ZOOM_STEP);
+            }
+        });
+
+        // Mobile pinch zoom
+        let initialDistance = 0;
+        let initialScale = 1;
+
+        container.addEventListener('touchstart', (e) => {
+            if (e.touches.length === 2) {
+                e.preventDefault();
+                initialDistance = getTouchDistance(e.touches);
+                initialScale = scale;
+            }
+        });
+
+        container.addEventListener('touchmove', (e) => {
+            if (e.touches.length === 2) {
+                e.preventDefault();
+                const currentDistance = getTouchDistance(e.touches);
+                const delta = currentDistance / initialDistance;
+                const newScale = initialScale * delta;
+                
+                if (newScale >= MIN_SCALE && newScale <= MAX_SCALE) {
+                    updateZoom(newScale);
+                }
+            }
+        });
+
+        function getTouchDistance(touches) {
+            const dx = touches[0].clientX - touches[1].clientX;
+            const dy = touches[0].clientY - touches[1].clientY;
+            return Math.sqrt(dx * dx + dy * dy);
+        }
+
+        // Set initial width and button states
+        wrapper.style.width = '100%';
+        updateZoom(1);
+    </script>
+</body>
+</html>
