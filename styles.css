@@ -32,3 +32,40 @@ html, body {
     -moz-user-select: none;
     will-change: transform;
 }
+
+.zoom-controls {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    display: none; /* Hidden by default */
+    flex-direction: column;
+    gap: 10px;
+    z-index: 1000;
+}
+
+.zoom-controls button {
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(5px);
+    transition: background-color 0.3s;
+}
+
+.zoom-controls button:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Only show zoom controls on desktop */
+@media (min-width: 768px) {
+    .zoom-controls {
+        display: flex;
+    }
+}

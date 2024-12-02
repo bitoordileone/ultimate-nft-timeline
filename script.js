@@ -166,4 +166,33 @@ document.addEventListener('DOMContentLoaded', () => {
     
     image.addEventListener('load', fitImageToScreen);
     window.addEventListener('resize', fitImageToScreen);
+
+    // Zoom button controls
+    const zoomInButton = document.getElementById('zoom-in');
+    const zoomOutButton = document.getElementById('zoom-out');
+
+    function zoomFromCenter(isZoomIn) {
+        // Get container center
+        const rect = container.getBoundingClientRect();
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+
+        // Get center position relative to image
+        const imageX = (centerX - pointX) / scale;
+        const imageY = (centerY - pointY) / scale;
+
+        // Calculate new scale
+        const zoomFactor = isZoomIn ? 1.1 : 0.9;
+        const newScale = scale * zoomFactor;
+        scale = Math.min(Math.max(0.1, newScale), 10);
+
+        // Update position to zoom from center
+        pointX = centerX - imageX * scale;
+        pointY = centerY - imageY * scale;
+
+        setTransform();
+    }
+
+    zoomInButton.addEventListener('click', () => zoomFromCenter(true));
+    zoomOutButton.addEventListener('click', () => zoomFromCenter(false));
 });
