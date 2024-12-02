@@ -80,6 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Touch events for mobile
     let lastDistance = 0;
     let initialScale = 1;
+    let lastCenter = { x: 0, y: 0 };
 
     container.addEventListener('touchstart', (e) => {
         if (e.touches.length === 2) {
@@ -90,6 +91,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 e.touches[0].clientY - e.touches[1].clientY
             );
             initialScale = scale;
+
+            // Calculate initial center point
+            lastCenter = {
+                x: (e.touches[0].clientX + e.touches[1].clientX) / 2,
+                y: (e.touches[0].clientY + e.touches[1].clientY) / 2
+            };
         }
     });
 
@@ -103,12 +110,27 @@ document.addEventListener('DOMContentLoaded', () => {
             );
             
             // Calculate center point between fingers
-            const centerX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
-            const centerY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+            const center = {
+                x: (e.touches[0].clientX + e.touches[1].clientX) / 2,
+                y: (e.touches[0].clientY + e.touches[1].clientY) / 2
+            };
+
+            // Get touch point relative to image
+            const rect = container.getBoundingClientRect();
+            const touchX = center.x - rect.left;
+            const touchY = center.y - rect.top;
+
+            // Get touch position relative to image
+            const imageX = (touchX - pointX) / scale;
+            const imageY = (touchY - pointY) / scale;
             
             // Calculate new scale
-            scale = initialScale * (distance / lastDistance);
-            scale = Math.min(Math.max(0.1, scale), 10); // Allow more zoom out, down to 0.1x
+            const newScale = initialScale * (distance / lastDistance);
+            scale = Math.min(Math.max(0.1, newScale), 10);
+            
+            // Update position to zoom at touch point
+            pointX = touchX - imageX * scale;
+            pointY = touchY - imageY * scale;
             
             setTransform();
         } else if (e.touches.length === 1) {
@@ -127,6 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
     container.addEventListener('touchend', () => {
         start = { x: 0, y: 0 };
         lastDistance = 0;
+        lastCenter = { x: 0, y: 0 };
     });
 
     // Prevent default touch behaviors
